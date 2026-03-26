@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playful DTMF Dialer</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="app-container">
+        <h1>Dial Tones</h1>
+        <div class="display" id="display">READY</div>
+        <div class="keypad">
+            <button class="key" data-note="1">1</button>
+            <button class="key" data-note="2">2</button>
+            <button class="key" data-note="3">3</button>
+            <button class="key btn-alt" data-note="A">A</button>
+            
+            <button class="key" data-note="4">4</button>
+            <button class="key" data-note="5">5</button>
+            <button class="key" data-note="6">6</button>
+            <button class="key btn-alt" data-note="B">B</button>
+            
+            <button class="key" data-note="7">7</button>
+            <button class="key" data-note="8">8</button>
+            <button class="key" data-note="9">9</button>
+            <button class="key btn-alt" data-note="C">C</button>
+            
+            <button class="key btn-special" data-note="*">*</button>
+            <button class="key" data-note="0">0</button>
+            <button class="key btn-special" data-note="#">#</button>
+            <button class="key btn-alt" data-note="D">D</button>
+        </div>
+        <div class="controls">
+            <button id="clearButton">Clear</button>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
