@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentOscGain = audioCtx.createGain();
         currentOscGain.gain.setValueAtTime(0, audioCtx.currentTime); //prevent initial pop
-        currentOscGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.02); //0.02 ramp
+        currentOscGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.0015);
         currentOscGain.connect(gainNode);
 
         freqs.forEach(freq => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function stopTone() {
         if (currentOscGain) {
-            currentOscGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.02);
+            currentOscGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.002);
         }
         
         oscillators.forEach(osc => {
