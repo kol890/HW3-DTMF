@@ -3,10 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const keys = document.querySelectorAll('.key');
     const clearButton = document.getElementById('clearButton');
     
-    let dialString = '';
+    let dialString = ''; //visible numbers typed out
     let audioCtx = null;
-    let oscillators = [];
-    let gainNode = null;
+    let oscillators = []; //2 current oscs
+    let gainNode = null; //audio control
+    let currentOscGain = null; //used to prevent popping
 
     const dtmfMap = {
         '1': [697, 1209], '2': [697, 1336], '3': [697, 1477], 'A': [697, 1633],
@@ -31,20 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
         initAudio();
         stopTone(); // Clean up any existing oscillators
 
+        currentOscGain = audioCtx.createGain();
+        currentOscGain.gain.setValueAtTime(0, audioCtx.currentTime); //prevent initial pop
+        currentOscGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.02); //0.02 ramp
+        currentOscGain.connect(gainNode);
+
         freqs.forEach(freq => {
             const osc = audioCtx.createOscillator();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            osc.connect(gainNode);
+            osc.connect(currentOscGain);
             osc.start();
             oscillators.push(osc);
         });
     }
 
     function stopTone() {
+        if (currentOscGain) {
+            currentOscGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.02);
+        }
+        
         oscillators.forEach(osc => {
-            osc.stop();
-            osc.disconnect();
+            // Delay the actual stop by 0.1s so the fade out has time to complete
+            osc.stop(audioCtx.currentTime + 0.1); 
         });
         oscillators = []; //empty osc list
     }
