@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function playTone(freqs) {
+    function playTone(freqs, rampTime = 0.0015) {
         initAudio();
         stopTone(); // Clean up any existing oscillators
 
         currentOscGain = audioCtx.createGain();
         currentOscGain.gain.setValueAtTime(0, audioCtx.currentTime); //prevent initial pop
-        currentOscGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.0015);
+        currentOscGain.gain.setTargetAtTime(1, audioCtx.currentTime, rampTime);
         currentOscGain.connect(gainNode);
 
         freqs.forEach(freq => {
@@ -68,22 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Brief delay before the ringing sound starts
         setTimeout(() => {
             display.innerText = 'RINGING...';
-            playTone([440, 480]);//standard ringtone freqs
+            playTone([440, 480], 0.1);//smoother ramp for ringing
 
             setTimeout(() => {
                 stopTone();
                 isRinging = false;
-                display.innerText = dialString;
+                display.innerText = 'CALL ENDED';
+                
                 setTimeout(() => {
-                    if (display.innerText === dialString) {
-                        display.innerText = 'CALL ENDED';
-                        setTimeout(() => {
-                            if (display.innerText === 'CALL ENDED') {
-                                display.innerText = dialString;
-                            }
-                        }, 1500);
-                    }
-                }, 500);
+                    dialString = '';
+                    display.innerText = 'READY';
+                }, 2000);
             }, 3000);
         }, 1000);
     }
