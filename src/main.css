@@ -106,6 +106,14 @@ h1 {
     animation: rainbow-slide 4s linear infinite;
 }
 
+.tip {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
 @keyframes rainbow-slide {
     to { background-position: 200% center; }
 }
