@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let oscillators = []; //2 current oscs
     let gainNode = null; //audio control
     let currentOscGain = null; //used to prevent popping
+    let isRinging = false;
 
     const dtmfMap = {
         '1': [697, 1209], '2': [697, 1336], '3': [697, 1477], 'A': [697, 1633],
@@ -59,21 +60,58 @@ document.addEventListener('DOMContentLoaded', () => {
         oscillators = []; //empty osc list
     }
 
+    function triggerRing() {
+        if (isRinging) return;
+        isRinging = true;
+        display.innerText = 'DIALING...';
+
+        // Brief delay before the ringing sound starts
+        setTimeout(() => {
+            display.innerText = 'RINGING...';
+            playTone([440, 480]);//standard ringtone freqs
+
+            setTimeout(() => {
+                stopTone();
+                isRinging = false;
+                display.innerText = dialString;
+                setTimeout(() => {
+                    if (display.innerText === dialString) {
+                        display.innerText = 'CALL ENDED';
+                        setTimeout(() => {
+                            if (display.innerText === 'CALL ENDED') {
+                                display.innerText = dialString;
+                            }
+                        }, 1500);
+                    }
+                }, 500);
+            }, 3000);
+        }, 1000);
+    }
+
     keys.forEach(key => {
         const val = key.getAttribute('data-note');
         
         //mouse and touch events for responsiveness
         const handleStart = (e) => {
+            if (isRinging) return;
             e.preventDefault();
-            updateDisplay(val);
-            if (dtmfMap[val]) {
-                playTone(dtmfMap[val]);
+            
+            if (dialString.length < 7) {
+                updateDisplay(val);
+                if (dtmfMap[val]) {
+                    playTone(dtmfMap[val]);
+                }
             }
         };
 
         const handleEnd = (e) => {
+            if (isRinging) return;
             e.preventDefault();
             stopTone();
+            
+            if (dialString.length === 7) {
+                triggerRing();
+            }
         };
 
         key.addEventListener('mousedown', handleStart);
@@ -85,21 +123,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     clearButton.addEventListener('click', () => {
+        if (isRinging) return;
         dialString = '';
         display.innerText = 'READY';
     });
 
     function updateDisplay(val) {
-        if (display.innerText === 'READY') {
+        if (dialString.length >= 7) return;
+
+        if (display.innerText === 'READY' || display.innerText === 'CALL ENDED') {
             dialString = val;
         } else {
             dialString += val;
         }
         
-        if (dialString.length > 12) {
-            display.innerText = '...' + dialString.slice(-11);
-        } else {
-            display.innerText = dialString;
-        }
+        display.innerText = dialString;
     }
 });
