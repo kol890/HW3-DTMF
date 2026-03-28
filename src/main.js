@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateDisplay(val) {
-        if (dialString.length >= 10) return;
+        if (dialString.length >= 10) return; //deploy
 
         if (display.innerText === 'READY' || display.innerText === 'CALL ENDED') {
             dialString = val;
