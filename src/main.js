@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function playTone(freqs, rampTime = 0.0015) {
         initAudio();
-        stopTone(); // Clean up any existing oscillators
+        stopTone();
 
         currentOscGain = audioCtx.createGain();
         currentOscGain.gain.setValueAtTime(0, audioCtx.currentTime); //prevent initial pop
@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         oscillators.forEach(osc => {
-            // Delay the actual stop by 0.1s so the fade out has time to complete
-            osc.stop(audioCtx.currentTime + 0.1); 
+            //delay the actual stop by 0.1s so the fade out has time to complete
+            osc.stop(audioCtx.currentTime + 0.1);
         });
         oscillators = []; //empty osc list
     }
@@ -65,18 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
         isRinging = true;
         display.innerText = 'DIALING...';
 
-        // Brief delay before the ringing sound starts
+        //delay before the ringing sound starts
         setTimeout(() => {
             display.innerText = 'RINGING...';
             playTone([440, 480], 0.1);//smoother ramp for ringing
 
             setTimeout(() => {
                 stopTone();
-                isRinging = false;
                 display.innerText = 'CALL ENDED';
                 
                 setTimeout(() => {
                     dialString = '';
+                    isRinging = false;
                     display.innerText = 'READY';
                 }, 2000);
             }, 3000);
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isRinging) return;
             e.preventDefault();
             
-            if (dialString.length < 7) {
+            if (dialString.length < 10) {
                 updateDisplay(val);
                 if (dtmfMap[val]) {
                     playTone(dtmfMap[val]);
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             stopTone();
             
-            if (dialString.length === 7) {
+            if (dialString.length === 10) {
                 triggerRing();
             }
         };
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateDisplay(val) {
-        if (dialString.length >= 7) return;
+        if (dialString.length >= 10) return;
 
         if (display.innerText === 'READY' || display.innerText === 'CALL ENDED') {
             dialString = val;
